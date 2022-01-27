@@ -20,8 +20,6 @@
     
     主从同步主要涉及这三个事件：table_map_event(表结构变更),rows_event,rows_query_event
 
-            
-
 
 ### undo log
  
@@ -33,12 +31,26 @@
     undo日志是一种临时日志，和当前事务紧密关联，记录着一个事务的操作轨迹。undo日志一般不会被持久化。
 
 ### redo log
-
+    
+    考虑一种场景，MySQL服务器正在处理事务请求，此时有部分事务还未提交，突然宕机了，这个时候该怎么办呢？
+    服务器即使重启了，但内存的数据会丢失，我们知道MySQL为了不影响性能，并没有将undo日志进行持久化。所以这时引入另一种
+    格式的日志，叫redo log。
+    
+    MySQL执行语句，在提交之前会将事务语句写入到redo log中，如果此时突然宕机，服务重启后，会从redo do恢复，然后继续执行事务操作。
 
 ### relay log
-
+    
+    relay是中继，起到接力作用。主要用在主从节点同步之间。从节点收到Binlog日志后，会把binlog日志写到relay log中，然后从节点开启
+    SQL执行线程，从relay log中读取SQL语句执行。
 
 ### error log
 
+    记录MySQL运行过程中的错误日志，方便线上排查问题
+
+### 慢查询日志
+
 
 ## 参考
+
+    1、https://dev.mysql.com/doc/refman/5.7/en/innodb-redo-log.html
+    2、https://dev.mysql.com/doc/refman/5.7/en/replica-logs-relaylog.html
