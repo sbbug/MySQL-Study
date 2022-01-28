@@ -12,6 +12,8 @@
     MySQL后续版本为了提升并发度，引入了乐观锁，即MVCC。MVCC是一种基于多版本协议的乐观锁机制，它可以有效提升资源访问的
     并发度。MySQL中的事务隔离级别RR(可重复读）、RC（读已提交）均使用了MVCC机制。
 
+    MVCC主要针对MySQL中的读请求实现的。乐观读。
+
 #### InnoDB存储引擎 row struct
 
 #### MVCC实现方式
@@ -57,7 +59,7 @@
     if (id >= m_low_limit_id) { 
       return (false);
 
-    } else if (m_ids.empty()) { // 没有未提交事务，最好了
+    } else if (m_ids.empty()) { // 没有未提交事务，最好了，也就是当前只有这一个请求存在，不需要考虑安全性
       return (true);
     }
 
