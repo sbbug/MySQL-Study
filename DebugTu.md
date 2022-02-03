@@ -43,11 +43,17 @@
 
     MySQL启动：/usr/local/mysql/support-files/mysql.server start
     MySQL停止：/usr/local/mysql/support-files/mysql.sock stop
+    
+![debug界面](./img/img_2.png)
 
 ###### mysql.sock
     
    [关于mysql.sokc](https://segmentfault.com/a/1190000016098820)
 
+
+###### vscode
+
+    启动路径：/usr/share/code/code  --user-data-dir
     
 ## 参考
 
@@ -60,6 +66,7 @@
 [GCC镜像下载加速](https://mirrors.tuna.tsinghua.edu.cn/gnu/gcc/gcc-8.3.0/)  
 [libstdc++.so.6.0 not found](https://itbilu.com/linux/management/NymXRUieg.html)
 [mysql编译安装](https://developer.aliyun.com/article/727403)  
+[vscode远程debug配置](https://code.visualstudio.com/docs/remote/ssh)
 
 
 
