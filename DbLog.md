@@ -43,6 +43,11 @@
     relay是中继，起到接力作用。主要用在主从节点同步之间。从节点收到Binlog日志后，会把binlog日志写到relay log中，然后从节点开启
     SQL执行线程，从relay log中读取SQL语句执行。
 
+    mysql有了binlog 日志，为什么还要relay日志呢？  
+    从节点解析完binlog日志后，会直接写入relay log，relay log起到解耦
+    作用，这样SQL执行线程和binlog IO线程完成解耦，直接操作relay日志就行，
+    同时relay log会落盘，可以防止数据丢失。
+
 ### error log
 
     记录MySQL运行过程中的错误日志，方便线上排查问题

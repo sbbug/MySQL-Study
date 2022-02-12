@@ -55,6 +55,30 @@
 
     事务在向间隙锁中插入数据时，必须要先拿到插入意图锁？
 
+#### Deadlock
+
+    死锁存在场景：
+    假设AB两个事务，A事务开启，插入一条数据，A事务添加share锁，获取数据，然后A事务想要删除数据，同时B事务开启，B事务需要删除该数据。
+    
+    具体例子：
+    准备工作
+    CREATE TABLE t (i INT) ENGINE = InnoDB; // 创建一张表，字段为i
+    INSERT INTO t (i) VALUES(1); // 插入值
+    开启A事务
+    START TRANSACTION;
+    SELECT * FROM t WHERE i = 1 FOR SHARE; // 获取记录共享锁
+    
+    B事务开启
+    START TRANSACTION;
+    DELETE FROM t WHERE i = 1; // 删除记录，需要获取记录对应的X锁，由于A事务未提交，并占用记录S锁，因此B事务等待
+
+    同时，A事务也要删除该数据
+    DELETE FROM t WHERE i = 1; // A事务需要将S锁升级为X锁，但是发现有B事务在等待X锁，因此会等待B事务先完成，但A事务不结束
+    B事务永远都获取不到锁，最终造成循环等待，即死锁。
+
+    死锁解法：
+    InnoDB存储引擎默认开启死锁检测功能，因此遇到死锁问题，可以自动检测，并通过撤销事务方式解决死锁问题。
+
 ###### 思考
 
     SELECT * FROM child WHERE id = 100; 这个语句会怎么加锁？
