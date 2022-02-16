@@ -59,3 +59,4 @@
 
     1、https://dev.mysql.com/doc/refman/5.7/en/innodb-redo-log.html
     2、https://dev.mysql.com/doc/refman/5.7/en/replica-logs-relaylog.html
+    3、https://github.com/alibaba/canal

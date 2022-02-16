@@ -7,7 +7,7 @@
     编辑器：VS Code 
     虚拟机:VMware workstation 16 player
     操作系统：CentOS 7 x86_64
-    mysql:
+    mysql: 8.0+
 
 #### Debug
     
@@ -32,7 +32,10 @@
     -DCMAKE_BUILD_TYPE=Debug    
 
     yum install boost boost-devel boost-doc
-    
+     
+    多线程make: make -j 4
+    将编译后的文件安装: make install
+
     ...
     遇水搭桥，遇山开路！
     ...
@@ -40,21 +43,38 @@
     每次cmake之前记得删除缓存，重新来过！
 
     du -ah --max-depth=1
+    
+    首先切入root权限:su 
 
     MySQL启动：/usr/local/mysql/support-files/mysql.server start
-    MySQL停止：/usr/local/mysql/support-files/mysql.sock stop
+
+    mysql服务启动后，登录MySQL：mysql -u root
+
+    MySQL停止：/usr/local/mysql/support-files/mysql.server stop
     
 ![debug界面](./img/img_2.png)
 
 ###### mysql.sock
     
-   [关于mysql.sokc](https://segmentfault.com/a/1190000016098820)
+   [关于mysql.sock](https://segmentfault.com/a/1190000016098820)
 
+###### my.cnf
+   
+    MySQL启动时配置文件路径:/etc/my.cnf
 
 ###### vscode
 
     启动路径：/usr/share/code/code  --user-data-dir
-    
+
+
+#### 遇到bug
+
+######@1 vscode debug出错
+
+![vscode debug出错](./img/img_4.png)
+
+    上述是权限问题，切换到su root即可。
+
 ## 参考
 
 [cmake3安装](https://www.cnblogs.com/fps2tao/p/9341795.html)  
