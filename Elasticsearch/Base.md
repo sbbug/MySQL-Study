@@ -8,6 +8,8 @@
 
 
 ## DSL基础语法
+     
+     ElasticSearch version:6.7.0
 
 #### 普通查询语法积累
 
@@ -141,6 +143,150 @@
                 // 在多个字段中进行匹配
 
                 Term是进行完全匹配，不进行分词分析，文档必须包含整个搜索的词汇。
+                
+                
+#### 聚合查询语法积累
+
+                范围查询 然后按照日期排序
+                GET /ad_hour_data_realtime_v4/doc/_search
+                {
+
+                   "query":{
+                     "range": {
+                      "date":{
+                        "gte":"2022-11-15T12",
+                        "lte":"2022-11-16T12"
+                      }
+                    }
+                    },
+                    "sort":{
+                      "date":{
+                        "order":"asc"
+                      }
+                    },
+                    "from":0,
+                    "size":1
+                }
+
+                Select * from ad_hour_data_realtime_v4 where date between ‘2022-11-15T12’ and ‘2022-11-16T12’ date order by asc; 
+
+                GET /ad_hour_data_realtime_v4/doc/_search
+                {
+                  "aggs":{
+                    "clickCountShow":{
+                      "min":{"field":"clickCount"}
+                    }
+                  },
+                  "size":0
+                }
+
+                Select min(clickCount) as clickCountShow from ad_hour_data_realtime_v4
+
+                GET /ad_hour_data_realtime_v4/doc/_search
+                { 
+                  "query":{
+                    "term":{
+                      "account":"25955794"
+                    }
+                  },
+                  "aggs":{
+                    "paidOrderCount":{
+                      "max":{"field":"paidOrderCount"}
+                    }
+                  },
+                  "size":0 // 只展示聚合结果，否则所有内容都展示
+                }
+
+                Select min(paidOrderCount) as paidOrderCount from ad_hour_data_realtime_v4 where account = ‘25955794’
+                
+
+#### 操作索引语法积累
+
+                查看某个指定索引的文档内容
+
+                GET /ad_hour_data_realtime_v4/doc/eafe78530d1068ccd95372d3a04c4c78
+
+                Select * from ad_hour_data_realtime_v4 where id = ‘eafe78530d1068ccd95372d3a04c4c78’
+
+
+
+                修改某个索引下指定字段值
+
+                POST /ad_hour_data_realtime_v4/doc/1534f456384b2ce0c85cf99bf165443c/_update 
+                {
+                  "doc":{
+                    "adId":"1752003083474999"
+                  }
+                }
+
+                Update ad_hour_data_realtime_v4 set adId = ‘1752003083474999’ where id = ‘1534f456384b2ce0c85cf99bf165443c’
+
+
+                往某个索引下添加文档
+
+                POST /ad_hour_data_realtime_v4/_doc
+                {
+                  "accountName":"手动添加的一个测试账号"
+                }
+
+                根据返回值查询添加的结果
+
+                GET /ad_hour_data_realtime_v4/doc/sVZ-IIUBLQ4krjD6aTfc
+
+                修改为字段赋值
+                POST /ad_hour_data_realtime_v4/doc/sVZ-IIUBLQ4krjD6aTfc/_update
+                {
+                  "doc":{
+                     "account":"123456"
+                  }
+                }
+
+#### ElasticSearch 文档结构操作
+
+
+                新建一个索引结构，用来组织存储文档
+
+                版本7.0以下使用如下方式
+
+                PUT /ad_test
+                {
+                  "settings": {
+                    "number_of_shards": 2,
+                    "number_of_replicas": 1
+                  },
+                  "mappings": {
+                    "ad_info": { // 7.0以上删掉这个
+                      "properties": {
+                        "adname": {
+                          "type": "text",
+                          "analyzer": "ik_smart"
+                        }
+                      }
+                    }
+                  }
+                }
+
+                新添加一个字段，并指定默认值
+
+                添加字段
+                PUT /ad_test/_doc/_mapping
+                {
+                    "properties": {
+                        "adType": {
+                            "type": "integer"
+                        }
+                    } 
+                }
+                然后指定默认值
+                POST /ad_test/_update_by_query
+                {
+                  "script":{
+                    "lang":"painless",
+                    "source":"if (ctx._source.adType == null) {ctx._source.adType = 1}"
+                  }
+                }
+
+                相当于使用painless脚本语言把ES中的老数据刷了一遍。
 
 ## 参考资料
 
