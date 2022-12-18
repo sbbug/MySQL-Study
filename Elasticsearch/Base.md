@@ -35,7 +35,7 @@
      所以Term Index是对Term Dictionary做的进一步抽象，其常驻内存。搜索时先在Term Index上找到Term大致位于哪个磁盘页，然后到对应磁盘页二分搜索对应的Term Dictionary，最终拿到
      Posting list，取到搜索的文档的内容。
      
-     ![关于Term index](../img/term-index.png)
+  ![关于Term index](../img/term-index.png)
 
 ## DSL基础语法
      
