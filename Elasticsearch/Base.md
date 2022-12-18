@@ -2,10 +2,40 @@
 
 ## 倒排索引
 
-    ES底层使用倒排索引实现数据的组织和存储。
-
-
-
+    ES底层使用倒排索引实现数据的组织和存储，即Term index -> Term Dictionary -> Posting list
+    
+    ES会为每个字段建立倒排索引，这也是其查询速度高的原因。比如文档中的content字段建立倒排索引，首选对内容进行分词，即一个一个term，然后计算出每个term的posting list，即该词在
+    哪些文档中出现。
+    
+    举例子如下存储结构
+    
+    docid            title              content
+     1               Java            Java多线程原理
+     2               Python          Python数据分析原理
+     3               C++             虚函数原理
+     
+     ES在对content字段建立索引时，先分词为:Java 多线程 原理  Python 数据 分析 原理  虚函数 原理
+     Java -> [1]
+     多线程 -> [1]
+     原理 -> [1,2,3]
+     Python -> [2]
+     数据 -> [2]
+     分析 -> [2]
+     虚函数 -> [3]
+     
+     以上就是倒排索引列表。可以看到从Term到posting list建立了关系，但有个问题，当用户输入搜索词“原理”时，难道需要一个一个Term遍历吗，非也。
+     为了提升查询速度，ES会对Term排序，这样可以二分搜索，O(logN)时间复杂度定位到对应的posting list，即ES会建立Term Dictionary，key为Term，Value为Posting list。
+     
+     再深入考虑一下，如果content内容非常多，分的Term有几万个，甚至几十万，这样需要在一个很大的字典上搜索，因此在搜索时会频繁的访问磁盘，并且如果同时把Term Dictionary缓存到内存中，会撑爆内存，所以为了进一步提升速度，会把Term Dictionary进一步抽象，即Term Index。Term Index类似一本字典大的章节列表，比如:
+     A 开头的Term ................XXX页
+     B 开头的Term ................XXX页
+     E 开头的Term ................XXX页
+     
+     如果所有的Term都是英文字符，那么Term index就是26个英文字符表构成。但实际可能以s开头的没有，以q开头的非常多。即很多单词前缀字符相同，又想到了前缀树结构。
+     所以Term Index是对Term Dictionary做的进一步抽象，其常驻内存。搜索时先在Term Index上找到Term大致位于哪个磁盘页，然后到对应磁盘页二分搜索对应的Term Dictionary，最终拿到
+     Posting list，取到搜索的文档的内容。
+     
+     
 
 ## DSL基础语法
      
