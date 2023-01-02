@@ -23,3 +23,9 @@
     所以经常出现CPU和内存被打满的问题。
 
 ### 写入流程
+
+
+
+## 参考
+
+[ES写入流程-从单分片单副本到多分片多副本](https://longxiaofei.github.io/post/elasticsearch%E7%9A%84%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B/)
